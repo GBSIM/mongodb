@@ -1,0 +1,26 @@
+{
+  "name": "mongodb",
+  "version": "1.0.0",
+  "description": "exercise for mongo db use",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GBSIM/mongodb.git"
+  },
+  "author": "Gyubin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GBSIM/mongodb/issues"
+  },
+  "homepage": "https://github.com/GBSIM/mongodb#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "mongoose": "^6.4.6",
+    "nodemon": "^2.0.19"
+  }
+}
