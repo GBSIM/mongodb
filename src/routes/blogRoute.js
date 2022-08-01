@@ -8,7 +8,7 @@ blogRouter.post('/', async (req,res) => {
         const {title, content, islive, userId} = req.body;
         if (typeof title !== 'string') return res.status(400).send({err: "title is required"})
         if (typeof content !== 'string') return res.status(400).send({err: "content is required"})
-        if (islive && islive !== 'boolean') return res.status(400).send({err: "islive must be boolean"})
+        if (islive && typeof islive !== 'boolean') return res.status(400).send({err: "islive must be boolean"})
         if (!isValidObjectId(userId)) return res.status(400).send({err: "userId is invalid"})
 
         let user = await User.findById(userId);
