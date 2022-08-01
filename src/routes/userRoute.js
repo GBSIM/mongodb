@@ -15,7 +15,6 @@ userRouter.get('/', async (req,res) => {
 
 userRouter.get('/:userId', async (req,res) => {
     const { userId } = req.params;
-    console.log(userId);
     try {
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send({err:"Invalid user id"})
         const user = await User.findOne({_id: userId});
