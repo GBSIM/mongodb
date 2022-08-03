@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const userRouter = Router();
-const {User} = require('../models');
+const {User, Blog, Comment} = require('../models');
 const {mongoose} = require('mongoose');
 
 userRouter.get('/', async (req,res) => {
@@ -40,11 +40,30 @@ userRouter.post('/', async (req,res) => {
     }
 });
 
-userRouter.delete('/:userId', async(req,res) => {
+userRouter.put('/:userId', async(req,res) => {
     const { userId } = req.params;
     try {
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send({err:"Invalid user id"})
-        const user = await User.findOneAndDelete({_id: userId});
+        const { age, name } = req.body;
+        if (!age && !name) return res.status(400).send({err:"age or name is required"})
+        if (typeof age !== 'number') res.status(400).send({err:"age must be number"})
+        
+        let user = await User.findById(userId);
+        if (age) user.age = age;
+        if (name) {
+            user.name = name;
+            await Blog.updateMany(
+                {"user._id": userId},
+                {"user.name": name}
+            );
+            await Blog.updateMany(
+                {},
+                {"comments.$[comment].userFullName": `${name.first} ${name.last}`},
+                { arrayFilters: [{"comment.user": userId}] }
+            );
+        }
+        await user.save();
+
         return res.send({ user })
     } catch(err) {
         console.log(err);
@@ -52,14 +71,17 @@ userRouter.delete('/:userId', async(req,res) => {
     }
 });
 
-userRouter.put('/user/:userId', async(req,res) => {
-    const { userId } = req.params;
+userRouter.delete('/:userId', async(req,res) => {    
     try {
-        if (!mongoose.isValidObjectId(userId)) return res.status(400).send({err:"Invalid user id"})
-        const { age, name } = req.body;
-        if (!age && !name) return res.status(400).send({err:"age or name is required"})
-        if (typeof age !== 'number') res.status(400).send({err:"age must be number"})
-        const user = await User.findByIdAndUpdate(userId,{$set: { age, name }},{new: true});
+        const { userId } = req.params;
+        if (!mongoose.isValidObjectId(userId)) return res.status(400).send({err: "invalid userId"});        
+        const [user] = await Promise.all([
+            User.findOneAndDelete({_id: userId}),
+            Blog.deleteMany({"user._id": userId}),
+            Blog.updateMany({"comments.user":userId}, {$pull: {comments: {user: userId}}}),
+            Comment.deleteMany({user: userId})
+        ]);
+
         return res.send({ user })
     } catch(err) {
         console.log(err);

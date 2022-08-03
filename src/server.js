@@ -12,7 +12,7 @@ const server = async() => {
         await mongoose.connect(MONGO_URI);
 
         // await generateFakeData(100,10,300);
-
+        mongoose.set("debug", true);
         app.use('/user',userRouter);
         app.use('/blog',blogRouter);
         app.use('/blog/:blogId/comment',commentRouter);
