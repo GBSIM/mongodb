@@ -19,7 +19,7 @@ const server = async() => {
     
         app.listen(3000,async () => {
             console.log('server listening on port 3000');
-            // await generateFakeData(1000000, 5, 20);
+            // await generateFakeData(100, 5, 20);
             // for (let i = 0; i < 20; i++) {
             //     await generateFakeData(10,1,10);
             // }

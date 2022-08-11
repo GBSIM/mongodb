@@ -29,7 +29,10 @@ blogRouter.get('/', async (req,res) => {
         page = parseInt(page);
         console.log({ page });
         const blogPerPage = 5;
-        const blogs = await Blog.find({}).skip(page*blogPerPage).limit(blogPerPage);
+        const blogs = await Blog.find({})
+            .sort({ updateAt: 1})
+            .skip(page*blogPerPage)
+            .limit(blogPerPage);
         return res.send({ blogs })
     } catch(err) {
         console.log(err);
