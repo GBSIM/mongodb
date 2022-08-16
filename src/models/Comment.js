@@ -5,7 +5,9 @@ const CommentSchema = new Schema({
     user: {type: ObjectId, required: true, ref: 'user', index: true},
     userFullName: { type: String, required: true},
     blog: {type: ObjectId, required: true, ref: 'blog'}
-},{timestamps: true})
+},{timestamps: true});
+
+CommentSchema.index({ blog: 1, createAt: -1});
 
 const Comment = model('comment', CommentSchema);
 

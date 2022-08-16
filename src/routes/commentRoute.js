@@ -21,11 +21,26 @@ commentRouter.post('/', async (req,res) => {
 
         if (!blog.islive) return res.status(400).send({err: "blog is not available"})
         
-        let comment = new Comment({...req.body, user, userFullName:`${user.name.first} ${user.name.last}`, blog});
+        let comment = new Comment({
+            content,
+            user, 
+            userFullName:`${user.name.first} ${user.name.last}`, 
+            blog: blogId
+        });
+        // await Promise.all([
+        //     comment.save(),
+        //     Blog.updateOne({_id: blogId}, { $push: { comments: comment}})
+        // ]);
+        // await comment.save();
+        
+        blog.commentsCount++;
+        blog.comments.push(comment);
+        if (blog.commentsCount > 3) blog.comments.shift();
         await Promise.all([
-            comment.save(),
-            Blog.updateOne({_id: blogId}, { $push: { comments: comment}})
+            comment.save(), 
+            blog.save()
         ]);
+
         return res.send({ comment })
     } catch(err) {
         console.log(err);
@@ -34,13 +49,15 @@ commentRouter.post('/', async (req,res) => {
 });
 
 commentRouter.get('/', async (req,res) => {
+    let { page = 0 } = req.query;
+    page = parseInt(page);
+    const {blogId} = req.params;
     try {
-        const {blogId} = req.params;
         if (!isValidObjectId(blogId)) return res.status(400).send({err: "blogId is invalid"})
         let blog = await Blog.findById(blogId);
         if (!blog) return res.status(400).send({err: "blog doest not exist"})
 
-        const comments = await Comment.find({blog: blogId});
+        const comments = await Comment.find({blog: blogId}).sort({ createAt: -1 }).skip( page * 3).limit( 3);
 
         return res.send({ comments })
     } catch(err) {
