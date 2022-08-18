@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const {userRouter, blogRouter, commentRouter} = require('./routes');
 const {generateFakeData} = require('../faker2');
 
-const MONGO_URI = 'mongodb+srv://oruum:banana1004@oruum.bsopcnz.mongodb.net/BlogService?retryWrites=true&w=majority';
+const { MONGO_URI } = process.env;
+console.log({MONGO_URI});
 
 const server = async() => {
     try {
