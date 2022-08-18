@@ -4,11 +4,12 @@ const mongoose = require('mongoose');
 const {userRouter, blogRouter, commentRouter} = require('./routes');
 const {generateFakeData} = require('../faker2');
 
-const { MONGO_URI } = process.env;
-console.log({MONGO_URI});
 
 const server = async() => {
     try {
+        const { MONGO_URI } = process.env;
+        if (!MONGO_URI) throw new Error("MONGO_RI is required!!");
+
         app.use(express.json());
         await mongoose.connect(MONGO_URI);
 
