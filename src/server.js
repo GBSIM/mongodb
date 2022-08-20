@@ -8,7 +8,7 @@ const {generateFakeData} = require('../faker2');
 const server = async() => {
     try {
         const { MONGO_URI } = process.env;
-        if (!MONGO_URI) throw new Error("MONGO_RI is required!!");
+        if (!MONGO_URI) throw new Error("MONGO_URI is required!!");
 
         app.use(express.json());
         await mongoose.connect(MONGO_URI);
